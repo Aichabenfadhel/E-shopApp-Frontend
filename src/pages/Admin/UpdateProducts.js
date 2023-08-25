@@ -1,27 +1,26 @@
 import React, { useState, useEffect } from "react";
-import Layout from "../../components/Layout/Layout";
-import AdminMenu from "../../components/Layout/AdminMenu";
-import axios from "axios";
+import Layout from "./../../components/Layout/Layout";
+import AdminMenu from "./../../components/Layout/AdminMenu";
 import { toast } from "react-toastify";
+import axios from "axios";
 import { Select } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
-
 const { Option } = Select;
+
 const UpdateProducts = () => {
   const navigate = useNavigate();
   const params = useParams();
   const [categories, setCategories] = useState([]);
-  const [photo, setPhoto] = useState("");
   const [name, setName] = useState("");
-  const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [category, setCategory] = useState("");
   const [quantity, setQuantity] = useState("");
   const [shipping, setShipping] = useState("");
   const [id, setId] = useState("");
+  const [photo, setPhoto] = useState("");
 
-  //get single Product
-
+  //get single product
   const getSingleProduct = async () => {
     try {
       const { data } = await axios.get(
@@ -34,77 +33,89 @@ const UpdateProducts = () => {
       setQuantity(data.product.quantity);
       setShipping(data.product.shipping);
       setCategory(data.product.category._id);
+      console.log("🚀 ~ file: UpdateProducts.js:34 ~ getSingleProduct ~ photo:", photo)
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong in getting Product");
+    }
+  };
+  useEffect(() => {
+    getSingleProduct();
+  }, []);
+  //get all category
+  const getAllCategory = async () => {
+    try {
+      const { data } = await axios.get(`${process.env.REACT_APP_API}/api/v1/category/allcategories`);
+      if (data?.success) {
+        setCategories(data?.category);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something wwent wrong in getting catgeory");
     }
   };
 
   useEffect(() => {
-    getSingleProduct();
+    getAllCategory();
   }, []);
 
-  const handleUpdate = async (req, res) => {
+  //create product function
+  const handleUpdate = async (e) => {
+    e.preventDefault();
     try {
       const productData = new FormData();
       productData.append("name", name);
       productData.append("description", description);
       productData.append("price", price);
       productData.append("quantity", quantity);
-      productData.append("shipping", shipping);
       photo && productData.append("photo", photo);
       productData.append("category", category);
-      const { data } = await axios.put(
+      const { data } = axios.put(
         `${process.env.REACT_APP_API}/api/v1/products/update-product/${id}`,
         productData
       );
-
       if (data?.success) {
-        toast.success("Product Updated Successfully");
-        navigate("/dashboard/admin/products");
-      } else {
+          toast.success("Product Updated Successfully");
+          navigate("/dashboard/admin/products");
+    } else {
         toast.error(data?.message);
       }
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong in Updating Product");
+      toast.error("something went wrong");
     }
   };
 
-  const getAllCategories = async () => {
+  //delete a product
+  const handleDelete = async () => {
     try {
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_API}/api/v1/category/allcategories`
+      let answer = window.prompt("Are You Sure want to delete this product ? ");
+      if (!answer) return;
+      const { data } = await axios.delete(
+        `${process.env.REACT_APP_API}/api/v1/products/delete-product/${id}`
       );
-      if (data?.success) {
-        setCategories(data?.category);
-      }
+      toast.success("Product DEleted Succfully");
+      navigate("/dashboard/admin/products");
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong in getting categories");
+      toast.error("Something went wrong");
     }
   };
-
-  useEffect(() => {
-    getAllCategories();
-  }, []);
-
   return (
-    <Layout title={"Dashboard - Product"}>
-      <div className="container-fluid m-3 p-3 ">
+    <Layout title={"Dashboard - Create Product"}>
+      <div className="container-fluid m-3 p-3">
         <div className="row">
           <div className="col-md-3">
             <AdminMenu />
           </div>
           <div className="col-md-9">
-            <h1> Update Product</h1>
+            <h1>Update Product</h1>
             <div className="m-1 w-75">
               <Select
                 bordered={false}
                 placeholder="Select a category"
                 size="large"
                 showSearch
-                className="form-select mb-3 "
+                className="form-select mb-3"
                 onChange={(value) => {
                   setCategory(value);
                 }}
@@ -128,7 +139,6 @@ const UpdateProducts = () => {
                   />
                 </label>
               </div>
-
               <div className="mb-3">
                 {photo ? (
                   <div className="text-center">
@@ -150,22 +160,20 @@ const UpdateProducts = () => {
                   </div>
                 )}
               </div>
-
               <div className="mb-3">
                 <input
                   type="text"
                   value={name}
-                  placeholder="Write product's name"
+                  placeholder="write a name"
                   className="form-control"
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
-
               <div className="mb-3">
                 <textarea
                   type="text"
                   value={description}
-                  placeholder="Write a Description"
+                  placeholder="write a description"
                   className="form-control"
                   onChange={(e) => setDescription(e.target.value)}
                 />
@@ -175,41 +183,44 @@ const UpdateProducts = () => {
                 <input
                   type="number"
                   value={price}
-                  placeholder="Write a Price"
+                  placeholder="write a Price"
                   className="form-control"
                   onChange={(e) => setPrice(e.target.value)}
                 />
               </div>
-
               <div className="mb-3">
                 <input
                   type="number"
                   value={quantity}
-                  placeholder="Choose a Quantity"
+                  placeholder="write a quantity"
                   className="form-control"
                   onChange={(e) => setQuantity(e.target.value)}
                 />
               </div>
-
               <div className="mb-3">
                 <Select
                   bordered={false}
-                  placeholder="Select Shipping"
+                  placeholder="Select Shipping "
                   size="large"
+                  showSearch
                   className="form-select mb-3"
                   onChange={(value) => {
                     setShipping(value);
                   }}
-                  value={shipping ? "Yes" : "No"}
+                  value={shipping ? "yes" : "No"}
                 >
                   <Option value="0">No</Option>
                   <Option value="1">Yes</Option>
                 </Select>
               </div>
-
               <div className="mb-3">
                 <button className="btn btn-primary" onClick={handleUpdate}>
-                  Update Product
+                  UPDATE PRODUCT
+                </button>
+              </div>
+              <div className="mb-3">
+                <button className="btn btn-danger" onClick={handleDelete}>
+                  DELETE PRODUCT
                 </button>
               </div>
             </div>
