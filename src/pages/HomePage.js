@@ -6,9 +6,12 @@ import { toast } from "react-toastify";
 import { Checkbox, Radio } from "antd";
 import { Prices } from "../components/Prices";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../Context/Cart";
+
 
 const HomePage = () => {
   const navigate=useNavigate()
+  const [cart,setCart]=useCart()
   const [auth, setAuth] = useAuth();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -189,7 +192,11 @@ useEffect(()=>{
                     >
                       More Details
                     </button>
-                    <button className="btn btn-secondary m-1">
+                    <button className="btn btn-secondary m-1"
+                    onClick={()=>{setCart([...cart,p]);
+                      localStorage.setItem('cart',JSON.stringify([...cart,p]))
+                    toast.success("Item Added To Cart")}}
+                    >
                       Add To Cart
                     </button>
                   </div>
