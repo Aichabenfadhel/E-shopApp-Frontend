@@ -33,7 +33,6 @@ const UpdateProducts = () => {
       setQuantity(data.product.quantity);
       setShipping(data.product.shipping);
       setCategory(data.product.category._id);
-      console.log("🚀 ~ file: UpdateProducts.js:34 ~ getSingleProduct ~ photo:", photo)
     } catch (error) {
       console.log(error);
     }

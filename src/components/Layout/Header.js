@@ -3,6 +3,7 @@ import { NavLink, Link } from "react-router-dom";
 import { FaShopify } from "react-icons/fa";
 import { useAuth } from "../../Context/Auth";
 import { toast } from "react-toastify";
+import SearchInput from "../form/SearchInput";
 
 const Header = () => {
   const [auth, setAuth] = useAuth();
@@ -38,7 +39,7 @@ const Header = () => {
             <FaShopify /> E-Shop
           </Link>
           <ul className="navbar-nav navbar-nav-right ms-auto mb-2 mb-lg-0">
-            {" "}
+            <SearchInput />
             <li className="nav-item ">
               <NavLink to="/" className="nav-link">
                 Home <span className="sr-only">(current)</span>
