@@ -4,9 +4,11 @@ import { FaShopify } from "react-icons/fa";
 import { useAuth } from "../../Context/Auth";
 import { toast } from "react-toastify";
 import SearchInput from "../form/SearchInput";
+import useCategory from "../../Context/Hooks/useCategory";
 
 const Header = () => {
   const [auth, setAuth] = useAuth();
+  const categories=useCategory()
   const handleLogout = () => {
     try {
       setAuth({
@@ -45,11 +47,33 @@ const Header = () => {
                 Home <span className="sr-only">(current)</span>
               </NavLink>
             </li>
-            <li className="nav-item ">
+            {/* <li className="nav-item ">
               <NavLink to="/category" className="nav-link">
                 Category
               </NavLink>
-            </li>
+            </li> */}
+
+<li className="nav-item dropdown">
+        <NavLink className="nav-link dropdown-toggle" to={"/categories"} id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Categories
+        </NavLink>
+        <ul className="dropdown-menu"  >
+          <li>
+            <Link className="dropdown-item"  to={"/categories"}>
+              All Categories
+            </Link>
+          </li>
+        {categories?.map((c)=>(
+          <li key={c?._id}>
+
+          <Link className="dropdown-item"  to={`/category/${c?.slug}`}>{c?.name}</Link>
+          </li>
+   
+   ))}
+   </ul>
+       
+      </li>
+
             {!auth.user ? (
               <>
                 <li className="nav-item">
