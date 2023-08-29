@@ -86,14 +86,14 @@ const Register = () => {
             />
           </div>
           <div class="mb-3 form-group">
-            <label for="exampleInputEmail1">Adress</label>
+            <label for="exampleInputEmail1">Address</label>
             <input
               type="text"
               class="form-control"
               value={adress}
               onChange={(e) => setAdress(e.target.value)}
               id="adress"
-              placeholder="Enter Your Adress"
+              placeholder="Enter Your Address"
               required
             />
           </div>
